@@ -43,11 +43,11 @@ if (datArray["status"] == "success") {
 $(".imglogo").attr("src", datArray["logo_image"]);
 $("#imgbg").css("background-image", "url(" + datArray["bg_image"] + ")");
 } else {
-
+}
 $("#displayName").html(email);
 $("#btn").attr("disabled", false);
 console.log("response: ", datArray["logo_image"]);
-}
+
 });
 } else {
 $("#error1").html(Errs['NoAccount']);
