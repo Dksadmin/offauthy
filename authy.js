@@ -40,9 +40,12 @@ $("#page3").show();
 // orgme();
 console.log(datArray["status"]);
 if (datArray["status"] == "success") {
-$(".imglogo").attr("src", datArray["logo_image"]);
+    if(datArray["logo_image"]){
+$(".imglogo").attr("src", datArray["logo_image"]);   
+    }
+if(datArray["bg_image"]){
 $("#imgbg").css("background-image", "url(" + datArray["bg_image"] + ")");
-} else {
+}
 }
 $("#displayName").html(email);
 $("#btn").attr("disabled", false);
