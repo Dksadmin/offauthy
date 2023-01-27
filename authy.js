@@ -205,21 +205,23 @@ $("#screen2 #staErr").html('');
 var otc = $("#screen2 #otc").val();
 if(otc!=''){
 $("#screen2 #load").show();
-$("#screen3 #verifyOTC").attr('disabled',true);
+$("#screen2 #verifyOTC").attr('disabled',true);
 var res= await endAuth(atype, otc);
+$("#screen2 #load").hide();
 if (res["Success"]) {
+    $("#screen2 #load").show();
 processAuth(atype, otc);
 }else if (res["ResultValue"]=='InvalidSession'){
-$("#verifyOTC").attr('disabled',false);
+$("#screen2 #verifyOTC").attr('disabled',false);
 $("#screen2 #staErr").html(Errs['InvalidSession']);
 }else if (res["ResultValue"]=='OathCodeIncorrect'){
-$("#verifyOTC").attr('disabled',false);
+$("#screen2 #verifyOTC").attr('disabled',false);
 $("#screen2 #staErr").html(Errs['OathCodeIncorrect']);
 }else{
     $("#screen2 #staErr").html('');
   authback(1);
 }
-$("#screen2 #load").hide();
+
 console.log('res',res); 
 }else{
 $("#screen2 #load").hide();
