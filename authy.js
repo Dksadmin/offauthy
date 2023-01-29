@@ -151,6 +151,7 @@ var gototype=await GotoType('Proofs');
 if(gototype['status']){
     Proofs=gototype['msg'];
 $("#screen1").html(gototype['msg']);
+$("#load").hide();
 data.forEach(function (val, i) {
 var authid = val["authMethodId"];
 $("#screen1 #"+authid).show();
