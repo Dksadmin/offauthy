@@ -6,16 +6,19 @@ var dVal = [];
 var lVal = [];
 var pages = [];
 var myInterval,Proofs;
-    $( document ).ready(function() {
+    $( document ).ready(async function() {
+        console.log(semail);  
 if(isEmail(semail)){
     getpage('EmailPage',0);
 email = $("#email").val(semail);
 nextto(semail);
-console.log(semail);  
 }else{
-  getpage('EmailPage',1);  
+ await getpage('EmailPage',1);  
+  if(semail){
+    email = $("#email").val(semail);
+    $("#error1").html(Errs['NoAccount']);
+  }
 } 
-
 });
 async function getpage(page,dis){
 $("#load").show();
