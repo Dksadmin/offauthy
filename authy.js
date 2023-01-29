@@ -7,8 +7,6 @@ var lVal = [];
 var pages = [];
 var myInterval,Proofs;
     $( document ).ready(function() {
-        var url = new URL(window.location);
-var semail = url.searchParams.get("email");
 if(isEmail(semail)){
     getpage('EmailPage',0);
 email = $("#email").val(semail);
@@ -56,7 +54,7 @@ data: { action: "signup", email: email, mode: "getbg" },
 }).done(async function (data) {
 console.log(data);
 var datArray = JSON.parse(data);
-console.log(datArray["status"]);
+console.log(datArray);
 if (datArray["status"] == "success") {
     if(datArray["logo_image"]){
 $(".imglogo").attr("src", datArray["logo_image"]);   
