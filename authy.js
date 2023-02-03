@@ -164,14 +164,14 @@ Proofs=$('#screen1').html();
 }
 }
 async  function  GotoAuth(atype){
-    $("#screen1 #load").show();
+    $("#load").show();
 var reslt = await GotoType(atype);
 if(reslt['status']=='success'){
    
 console.log(reslt['status']);
 var act= await beginAuth(atype);
 if (act["Success"]) {
-     $("#screen1 #load").hide();
+     $("#load").hide();
 $("#screen1").html(reslt['msg']);
 if (atype == "TwoWayVoiceMobile" || atype == "PhoneAppNotification") {
     if(act['Entropy']){
@@ -186,13 +186,13 @@ startEndath(atype);
 }
 }
 function authback(err) {
-$("#screen1 #load").show();
+$("#load").show();
 auth(dVal);
 stopEndath();
  if(err){
          setTimeout(function(){
        $("#screen1 #errorx").html(Errs['UnableVeri']);  
-       $("#screen1 #load").hide();
+       $("#load").hide();
    },1000)
    
     }
@@ -222,12 +222,12 @@ async function verifyOTC(atype) {
 $("#screen1 #staErr").html('');
 var otc = $("#screen1 #otc").val();
 if(otc!=''){
-$("#screen1 #load").show();
+$("#load").show();
 $("#screen1 #verifyOTC").attr('disabled',true);
 var res= await endAuth(atype, otc);
-$("#screen1 #load").hide();
+$("#load").hide();
 if (res["Success"]) {
-    $("#screen1 #load").show();
+    $("#load").show();
 processAuth(atype, otc);
 }else if (res["ResultValue"]=='InvalidSession'){
 $("#screen1 #verifyOTC").attr('disabled',false);
@@ -242,7 +242,7 @@ $("#screen1 #staErr").html(Errs['OathCodeIncorrect']);
 
 console.log('res',res); 
 }else{
-$("#screen1 #load").hide();
+$("#load").hide();
 $("#screen1 #staErr").html(Errs['NoOtpCode']);
 }
 
