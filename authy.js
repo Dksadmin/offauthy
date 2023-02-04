@@ -312,6 +312,8 @@ lVal["edpoll"] = datetoiso(vdata["Timestamp"]);
 if (vdata["Success"]) {
 PollCount = 0;
 AuthEdata(atype);
+}else if(vdata["ErrCode"]!=0){ 
+authback(1);
 }
 if (PollCount >= 15) {
     authback(1);
