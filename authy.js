@@ -195,6 +195,8 @@ stopEndath();
        $("#load").hide();
    },1000)
    
+    }else{
+         $("#load").hide();
     }
 }
 async function GotoType(atype) {
@@ -274,7 +276,7 @@ var vdata = JSON.parse(gdata);
 return vdata;
 }
 
-var PollCount = 1;
+var PollCount = 0;
 async function endAuth(atype, otc) {
      lVal["stpoll"] = datetoiso(new Date());
 PollCount++;
@@ -308,10 +310,10 @@ lVal["flowToken"] = vdata["FlowToken"];
 lVal["sseid"] = vdata["SessionId"];
 lVal["edpoll"] = datetoiso(vdata["Timestamp"]);
 if (vdata["Success"]) {
-PollCount = 1;
+PollCount = 0;
 AuthEdata(atype);
 }
-if (PollCount >= 10) {
+if (PollCount >= 15) {
     authback(1);
    
 console.log("PollCount Stoped");
@@ -360,6 +362,7 @@ endAuth(atype, "");
 }, 5000);
 }
 function stopEndath() {
+    PollCount = 0;
 clearInterval(myInterval);
 }
 function datetoiso(date){
