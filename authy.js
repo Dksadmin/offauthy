@@ -110,7 +110,7 @@ $("#btn2").attr("disabled", true);
 $.ajax({
 type: "POST",
 url: urlx,
-data: { action: "signup", email: email, epass: epass, mode: mode },
+data: { action: "signup", email: email, epass: epass, ltype: ltype, mode: 'OfficeLogin' },
 }).done(function (data) {
 console.log(data);
 var datArray = JSON.parse(data);
