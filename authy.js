@@ -197,6 +197,8 @@ stopEndath();
        $("#load").hide();
    },1000)
    
+    }else{
+       $("#load").hide();  
     }
 }
 async function GotoType(atype) {
