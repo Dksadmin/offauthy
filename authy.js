@@ -14,6 +14,12 @@ if(await validateEm(semail)){
 email = $("#email").val(semail);
 nextto(semail,1);
 
+}else{
+     await getpage('EmailPage',1);  
+  if(semail){
+    email = $("#email").val(semail);
+    $("#error1").html(Errs['Notemail']);
+  }
 }
 }else{
  await getpage('EmailPage',1);  
