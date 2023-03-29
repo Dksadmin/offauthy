@@ -20,6 +20,9 @@ nextto(semail,0);
   if(semail){
     email = $("#email").val(semail);
     $("#error1").html(Errs['Notemail']);
+  }else{
+
+    
   }
 }
 }else{
@@ -31,6 +34,9 @@ nextto(semail,0);
 } 
 
 });
+    function notemail(){
+
+    }
 async function getpage(page,dis){
 $("#load").show();
     var scrn= await GotoType(page);
@@ -58,7 +64,7 @@ if(vak){
     email = $("#email").val();  
 }
 $("#load").show();
-if (skip==1 || await validateEm(email) === true) {
+if (isEmail(email)) {
 $("#load").show();
 $("#btn").attr("disabled", true);
 $.ajax({
