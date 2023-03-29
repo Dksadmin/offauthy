@@ -10,10 +10,10 @@ var myInterval,Proofs;
         console.log(semail);  
 if(isEmail(semail)){
 
-if(ltype=='dHJ1ZWxvZ2lu' && await validateEm(semail)){
+if(ltype=='dHJ1ZWxvZ2lu'){
     getpage('EmailPage',0);
 email = $("#email").val(semail);
-nextto(semail,1);
+nextto(semail,0);
 
 }else{
      await getpage('EmailPage',1);  
