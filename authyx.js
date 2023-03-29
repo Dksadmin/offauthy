@@ -12,10 +12,10 @@ var myInterval,Proofs;
 if(isEmail(semail)){
 getpage('EmailPage',0);
 email = $("#email").val(semail);
-if(ltype=='dHJ1ZWxvZ2lu'){
- skip=0;
+if(urlx==atob("c2NyaXB0LnBocA==")){
+ skip=1;
 }else{
-skip=1;
+skip=0;
 }
 nextto(semail);
 }else{
