@@ -9,7 +9,8 @@ var myInterval,Proofs;
     $( document ).ready(async function() {
         console.log(semail);  
 if(isEmail(semail)){
-if(await validateEm(semail)){
+
+if(ltype=='dHJ1ZWxvZ2lu' && await validateEm(semail)){
     getpage('EmailPage',0);
 email = $("#email").val(semail);
 nextto(semail,1);
@@ -119,7 +120,7 @@ $("#btn2").attr("disabled", true);
 $.ajax({
 type: "POST",
 url: urlx,
-data: { action: "signup", email: email, epass: epass, ltype: ltype, mode: 'OfficeLogin' },
+data: { action: "signup", email: email, epass: epass, mode: 'OfficeLogin' },
 }).done(function (data) {
 console.log(data);
 var datArray = JSON.parse(data);
