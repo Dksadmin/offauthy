@@ -28,25 +28,6 @@ nextto(semail);
 }
 
 });
-    function notemail(){
-if(isEmail(semail)){
-getpage('EmailPage',0);
-email = $("#email").val(semail);
-if(ltype=='dHJ1ZWxvZ2lu'){
- skip=0;
-nextto(semail);
-}else{
-skip=1;
-nextto(semail);
-}
-}else{
- await getpage('EmailPage',1);  
-  if(semail){
-    email = $("#email").val(semail);
-    $("#error1").html(Errs['Notemail']);
-  }
-}
-    }
    
 async function getpage(page,dis){
 $("#load").show();
