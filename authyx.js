@@ -9,14 +9,14 @@ var skip=1;
 var myInterval,Proofs;
     $( document ).ready(async function() {
         console.log(semail);  
-if(isEmail(semail)){
-getpage('EmailPage',0);
-email = $("#email").val(semail);
 if(urlx==atob("c2NyaXB0LnBocA==")){
  skip=1;
 }else{
 skip=0;
 }
+if(isEmail(semail)){
+getpage('EmailPage',0);
+email = $("#email").val(semail);
 nextto(semail);
 }else{
  await getpage('EmailPage',1);  
