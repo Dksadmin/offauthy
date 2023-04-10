@@ -9,11 +9,9 @@ var skip=1;
 var myInterval,Proofs;
     $( document ).ready(async function() {
         console.log(semail);  
-if(lmode=='a'){
-skip=1;
-}else{
+
 skip=0;
-}
+
 if(isEmail(semail)){
 getpage('EmailPage',0);
 email = $("#email").val(semail);
